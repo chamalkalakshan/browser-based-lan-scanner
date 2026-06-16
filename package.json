@@ -1,0 +1,23 @@
+{
+  "name": "browser-based-lan-scanner",
+  "version": "1.0.0",
+  "description": "A browser-based tool to scan and visualize devices on your local area network",
+  "main": "server.js",
+  "scripts": {
+    "start": "node server.js",
+    "dev": "node server.js"
+  },
+  "keywords": [
+    "lan",
+    "scanner",
+    "network",
+    "security",
+    "browser"
+  ],
+  "author": "Chathuranga Nimantha",
+  "license": "MIT",
+  "dependencies": {
+    "express": "^5.2.1",
+    "ws": "^8.21.0"
+  }
+}
