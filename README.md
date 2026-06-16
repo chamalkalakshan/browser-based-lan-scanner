@@ -14,9 +14,11 @@ A browser-based tool for discovering and analyzing devices on your local area ne
 - **Table and Grid Views** - Switch between detailed table and compact card grid
 - **Export Results** - Download scan results as JSON or CSV
 
-## Screenshots
+## Screenshot
 
-Open `http://localhost:3000` after starting the server to see the dark-themed UI with live scan output.
+![LAN Scanner UI](assets/screenshot.png)
+
+*Scan complete - 8 hosts found across 254 addresses in 1m 10s, with open ports and device types identified.*
 
 ## Requirements
 
@@ -26,7 +28,7 @@ Open `http://localhost:3000` after starting the server to see the dark-themed UI
 ## Installation
 
 ```bash
-git clone https://github.com/YOUR_USERNAME/browser-based-lan-scanner.git
+git clone https://github.com/chamalkalakshan/browser-based-lan-scanner.git
 cd browser-based-lan-scanner
 npm install
 ```
