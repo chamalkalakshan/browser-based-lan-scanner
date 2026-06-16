@@ -1,0 +1,191 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>LAN Scanner</title>
+  <link rel="stylesheet" href="css/style.css" />
+</head>
+<body>
+  <div class="app">
+    <header class="header">
+      <div class="header-left">
+        <div class="logo">
+          <span class="logo-icon">&#9678;</span>
+          <span class="logo-text">LAN Scanner</span>
+        </div>
+        <span class="header-subtitle">Local Area Network Discovery Tool</span>
+      </div>
+      <div class="header-right">
+        <button id="history-btn" class="btn btn-sm btn-secondary">History</button>
+        <span id="connection-status" class="badge badge-disconnected">Disconnected</span>
+      </div>
+    </header>
+
+    <main class="main">
+      <section class="sidebar">
+        <div class="card">
+          <h2 class="card-title">Scan Configuration</h2>
+
+          <div class="form-group">
+            <label class="form-label">Network Interface</label>
+            <select id="interface-select" class="form-control">
+              <option value="">Auto-detect</option>
+            </select>
+          </div>
+
+          <div class="form-group">
+            <label class="form-label">Subnet Override</label>
+            <input
+              id="subnet-input"
+              type="text"
+              class="form-control"
+              placeholder="e.g. 192.168.1.0"
+            />
+          </div>
+
+          <div class="form-group">
+            <label class="form-label">Netmask</label>
+            <input
+              id="netmask-input"
+              type="text"
+              class="form-control"
+              placeholder="255.255.255.0"
+              value="255.255.255.0"
+            />
+          </div>
+
+          <div class="form-group">
+            <label class="checkbox-label">
+              <input id="port-scan-toggle" type="checkbox" checked />
+              <span>Enable port scanning</span>
+            </label>
+          </div>
+
+          <div class="form-group" id="scan-speed-group">
+            <label class="form-label">Scan Speed</label>
+            <select id="scan-speed" class="form-control">
+              <option value="fast">Fast (500ms timeout)</option>
+              <option value="normal" selected>Normal (1s timeout)</option>
+              <option value="thorough">Thorough (2s timeout)</option>
+            </select>
+          </div>
+
+          <button id="scan-btn" class="btn btn-primary btn-block">
+            Start Scan
+          </button>
+
+          <button id="stop-btn" class="btn btn-danger btn-block" disabled>
+            Stop
+          </button>
+        </div>
+
+        <div class="card" id="network-info-card">
+          <h2 class="card-title">Network Interfaces</h2>
+          <div id="network-info-list" class="info-list">
+            <p class="text-muted">Loading...</p>
+          </div>
+        </div>
+
+        <div class="card">
+          <h2 class="card-title">Scan Summary</h2>
+          <div class="stats-grid">
+            <div class="stat-item">
+              <span class="stat-value" id="stat-total">0</span>
+              <span class="stat-label">Probed</span>
+            </div>
+            <div class="stat-item">
+              <span class="stat-value" id="stat-found">0</span>
+              <span class="stat-label">Found</span>
+            </div>
+            <div class="stat-item">
+              <span class="stat-value" id="stat-ports">0</span>
+              <span class="stat-label">Open Ports</span>
+            </div>
+            <div class="stat-item">
+              <span class="stat-value" id="stat-elapsed">0s</span>
+              <span class="stat-label">Elapsed</span>
+            </div>
+          </div>
+        </div>
+      </section>
+
+      <section class="content">
+        <div class="toolbar">
+          <div class="toolbar-left">
+            <span id="scan-status-text" class="status-text">Ready to scan</span>
+          </div>
+          <div class="toolbar-right">
+            <button id="export-json-btn" class="btn btn-sm btn-secondary" disabled>
+              Export JSON
+            </button>
+            <button id="export-csv-btn" class="btn btn-sm btn-secondary" disabled>
+              Export CSV
+            </button>
+            <div class="view-toggle">
+              <button id="view-table-btn" class="btn btn-sm btn-secondary active" title="Table view">
+                &#9776;
+              </button>
+              <button id="view-grid-btn" class="btn btn-sm btn-secondary" title="Grid view">
+                &#9634;
+              </button>
+            </div>
+          </div>
+        </div>
+
+        <div id="progress-container" class="progress-container" hidden>
+          <div class="progress-bar-wrap">
+            <div id="progress-bar" class="progress-bar" style="width: 0%"></div>
+          </div>
+          <span id="progress-label" class="progress-label">0%</span>
+        </div>
+
+        <div id="log-container" class="log-container">
+          <p class="log-placeholder">Scan output will appear here...</p>
+        </div>
+
+        <div id="results-container" class="results-container" hidden>
+          <table id="results-table" class="results-table">
+            <thead>
+              <tr>
+                <th>IP Address</th>
+                <th>Hostname</th>
+                <th>MAC Address</th>
+                <th>Device Type</th>
+                <th>Open Ports</th>
+                <th>Actions</th>
+              </tr>
+            </thead>
+            <tbody id="results-tbody"></tbody>
+          </table>
+
+          <div id="results-grid" class="results-grid" hidden></div>
+        </div>
+
+        <div id="detail-panel" class="detail-panel" hidden>
+          <div class="detail-header">
+            <h3 id="detail-title">Host Detail</h3>
+            <button id="detail-close-btn" class="btn btn-sm btn-secondary">Close</button>
+          </div>
+          <div id="detail-body" class="detail-body"></div>
+        </div>
+      </section>
+    </main>
+  </div>
+
+  <div id="history-modal" class="modal-overlay" hidden>
+    <div class="modal">
+      <div class="modal-header">
+        <h3>Scan History</h3>
+        <div style="display:flex;gap:8px">
+          <button id="history-clear-btn" class="btn btn-sm btn-danger">Clear</button>
+          <button id="history-close-btn" class="btn btn-sm btn-secondary">Close</button>
+        </div>
+      </div>
+      <div id="history-body" class="modal-body"></div>
+    </div>
+  </div>
+
+  <script src="js/app.js"></script>
+</body>
+</html>
